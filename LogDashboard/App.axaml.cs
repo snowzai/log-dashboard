@@ -1,10 +1,12 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Microsoft.Extensions.DependencyInjection;
+using Avalonia.Threading;
+using LogDashboard.Services;
 using LogDashboard.ViewModels;
 using LogDashboard.Views;
-using LogDashboard.Services;
+using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
 
 namespace LogDashboard;
 
@@ -19,18 +21,20 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var themeService =
-                Program.Services.GetRequiredService<ThemeService>();
+            var loadingWindow = new LoadingWindow();
+            desktop.MainWindow = loadingWindow;
+            loadingWindow.Show();
 
+            var themeService = Program.Services.GetRequiredService<ThemeService>();
             themeService.Initialize();
 
-            var mainWindow =
-                Program.Services.GetRequiredService<MainWindow>();
-
-            mainWindow.DataContext =
-                Program.Services.GetRequiredService<MainWindowViewModel>();
+            // 回到 UI thread 建立並顯示 MainWindow
+            var mainWindow = Program.Services.GetRequiredService<MainWindow>();
+            mainWindow.DataContext = Program.Services.GetRequiredService<MainWindowViewModel>();
 
             desktop.MainWindow = mainWindow;
+            mainWindow.Show();
+            loadingWindow.Close();
         }
 
         base.OnFrameworkInitializationCompleted();

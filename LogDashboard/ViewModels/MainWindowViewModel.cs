@@ -55,7 +55,7 @@ namespace LogDashboard.ViewModels
             if (!string.IsNullOrWhiteSpace(settings.LastFolder))
             {
                 CurrentFolder = settings.LastFolder;
-                StartWatcher();
+                //StartWatcher();
                 _ = LoadLogsAsync();
             }
             else
@@ -333,45 +333,51 @@ namespace LogDashboard.ViewModels
 
         private void ApplyFilter()
         {
-            IEnumerable<LogEntry> query = _allLogs;
+            // ── Step 1：先做「時間 + 搜尋」filter，不含 level ──
+            //    這個結果用來計算 sidebar 的統計數字
+            IEnumerable<LogEntry> timeAndSearchQuery = _allLogs;
 
-            // 自訂日期範圍優先；否則用時間範圍下拉
             if (CustomStart.HasValue || CustomEnd.HasValue)
             {
                 if (CustomStart.HasValue)
-                    query = query.Where(x => x.Timestamp >= CustomStart.Value);
+                    timeAndSearchQuery = timeAndSearchQuery.Where(x => x.Timestamp >= CustomStart.Value);
                 if (CustomEnd.HasValue)
-                    query = query.Where(x => x.Timestamp <= CustomEnd.Value);
+                    timeAndSearchQuery = timeAndSearchQuery.Where(x => x.Timestamp <= CustomEnd.Value);
             }
             else
             {
                 var since = GetTimeRangeStart();
                 if (since.HasValue)
-                    query = query.Where(x => x.Timestamp >= since.Value);
+                    timeAndSearchQuery = timeAndSearchQuery.Where(x => x.Timestamp >= since.Value);
             }
 
             if (!string.IsNullOrWhiteSpace(SearchText))
-                query = query.Where(x =>
+                timeAndSearchQuery = timeAndSearchQuery.Where(x =>
                     (x.Message?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
                     (x.Exception?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    x.Properties.Any(p => p.Value?.ToString()?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true));
+                    x.Properties.Any(p =>
+                        p.Value?.ToString()?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true));
 
-            if (SelectedLevel != "All")
-                query = query.Where(x =>
-                    string.Equals(x.Level, SelectedLevel, StringComparison.OrdinalIgnoreCase));
+            var timeAndSearchList = timeAndSearchQuery.ToList();
 
-            var filtered = query.ToList();
+            // ── Step 2：統計永遠從 timeAndSearchList 算，不受 level filter 影響 ──
+            //    點選 Error 後，All=2000、Warning=134 這些數字不會改變
+            UpdateStatistics(timeAndSearchList);
+
+            // ── Step 3：再套 level filter，放入 FilteredLogs ──
+            var filtered = SelectedLevel == "All"
+                ? timeAndSearchList
+                : timeAndSearchList
+                    .Where(x => string.Equals(x.Level, SelectedLevel, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
 
             FilteredLogs.Clear();
             foreach (var item in filtered)
                 FilteredLogs.Add(item);
 
-            // 統計從 filtered 計算，反映目前篩選條件
-            UpdateStatistics(filtered);
-
-            // Exception 頁籤
-            var exceptions = filtered
-                .Where(x => x.Level == "Error" || x.Level == "Fatal")
+            // ── Step 4：Exception tab 固定顯示 Error+Fatal，不受 level filter 影響 ──
+            var exceptions = timeAndSearchList
+                .Where(x => x.Level is "Error" or "Fatal")
                 .ToList();
 
             ExceptionLogs.Clear();

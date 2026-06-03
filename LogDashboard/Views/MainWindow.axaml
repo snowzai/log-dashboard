@@ -1,0 +1,435 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:LogDashboard.ViewModels"
+        xmlns:converters="using:LogDashboard.Converters"
+        xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+        mc:Ignorable="d"
+        d:DesignWidth="1600"
+        d:DesignHeight="900"
+        x:Class="LogDashboard.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="Log Dashboard">
+
+    <Window.Resources>
+        <converters:LogLevelToBrushConverter x:Key="LogLevelToBrushConverter" />
+    </Window.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*"
+          Margin="15">
+
+        <!-- Header -->
+        <Border Grid.Row="0"
+                Margin="0,0,0,10"
+                Padding="10">
+
+            <Grid ColumnDefinitions="*,Auto">
+
+                <StackPanel>
+                    <TextBlock Text="Log Dashboard"
+                               FontSize="24"
+                               FontWeight="Bold"/>
+
+                    <TextBlock Text="{Binding CurrentFolder}"
+                               Opacity="0.7"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal"
+                            Spacing="8"
+                            Grid.Column="1">
+
+                    <!-- 自動刷新頻率 -->
+                    <ComboBox ItemsSource="{Binding RefreshIntervals}"
+                              SelectedItem="{Binding SelectedRefreshInterval}"
+                              Width="90"
+                              VerticalAlignment="Center" />
+
+                    <!-- 開始／暫停 Watcher -->
+                    <Button Content="{Binding WatcherButtonIcon}"
+                            Command="{Binding ToggleWatcherCommand}"
+                            ToolTip.Tip="{Binding WatcherButtonTooltip}"
+                            Width="36" />
+
+                    <Button Content="📁 選擇資料夾"
+                            Command="{Binding SelectFolderCommand}" />
+
+                    <Button Content="🔄 重新整理"
+                            Command="{Binding RefreshCommand}" />
+
+                    <Button Content="🌓 Theme"
+                            Command="{Binding ToggleThemeCommand}" />
+
+                </StackPanel>
+
+            </Grid>
+
+        </Border>
+
+        <!-- Statistics -->
+        <UniformGrid Grid.Row="1"
+                     Columns="7"
+                     Margin="0,0,0,10">
+
+            <Border Classes="Card">
+                <StackPanel>
+                    <TextBlock Text="Total"/>
+                    <TextBlock Text="{Binding TotalCount}"
+                               FontSize="24"/>
+                </StackPanel>
+            </Border>
+
+            <Border Classes="Card">
+                <StackPanel>
+                    <TextBlock Text="Fatal"/>
+                    <TextBlock Text="{Binding FatalCount}"
+                               Foreground="{DynamicResource FatalBrush}"
+                               FontSize="24"/>
+                </StackPanel>
+            </Border>
+
+            <Border Classes="Card">
+                <StackPanel>
+                    <TextBlock Text="Error"/>
+                    <TextBlock Text="{Binding ErrorCount}"
+                               Foreground="{DynamicResource ErrorBrush}"
+                               FontSize="24"/>
+                </StackPanel>
+            </Border>
+
+            <Border Classes="Card">
+                <StackPanel>
+                    <TextBlock Text="Warning"/>
+                    <TextBlock Text="{Binding WarningCount}"
+                               Foreground="{DynamicResource WarningBrush}"
+                               FontSize="24"/>
+                </StackPanel>
+            </Border>
+
+            <Border Classes="Card">
+                <StackPanel>
+                    <TextBlock Text="Info"/>
+                    <TextBlock Text="{Binding InformationCount}"
+                               Foreground="{DynamicResource InformationBrush}"
+                               FontSize="24"/>
+                </StackPanel>
+            </Border>
+
+            <Border Classes="Card">
+                <StackPanel>
+                    <TextBlock Text="Debug"/>
+                    <TextBlock Text="{Binding DebugCount}"
+                               Foreground="{DynamicResource DebugBrush}"
+                               FontSize="24"/>
+                </StackPanel>
+            </Border>
+
+            <Border Classes="Card">
+                <StackPanel>
+                    <TextBlock Text="Verbose"/>
+                    <TextBlock Text="{Binding VerboseCount}"
+                               Foreground="{DynamicResource VerboseBrush}"
+                               FontSize="24"/>
+                </StackPanel>
+            </Border>
+
+        </UniformGrid>
+
+        <!-- Charts -->
+        <Grid Grid.Row="2"
+              ColumnDefinitions="400,*"
+              Margin="0,0,0,10">
+
+            <!-- Pie Chart -->
+            <Border Grid.Column="0"
+                    Classes="Card"
+                    Margin="0,0,10,0">
+
+                <StackPanel>
+
+                    <TextBlock Text="Level Distribution"
+                               FontWeight="Bold"
+                               Margin="0,0,0,10"/>
+
+                    <!-- LiveCharts PieChart -->
+                    <lvc:PieChart Series="{Binding PieSeries}"
+                                  Height="200"
+                                  LegendPosition="Right" />
+
+                </StackPanel>
+
+            </Border>
+
+            <!-- Timeline -->
+            <Border Grid.Column="1"
+                    Classes="Card">
+
+                <StackPanel>
+
+                    <TextBlock Text="Timeline"
+                               FontWeight="Bold"
+                               Margin="0,0,0,10"/>
+
+                    <!-- LiveCharts CartesianChart -->
+                    <lvc:CartesianChart Series="{Binding TimelineSeries}"
+                                        XAxes="{Binding TimelineXAxes}"
+                                        Height="200" />
+
+                </StackPanel>
+
+            </Border>
+
+        </Grid>
+
+        <!-- Filter -->
+        <StackPanel Grid.Row="3" Spacing="8" Margin="0,0,0,10">
+
+            <!-- 第一排：搜尋 + 頻率 + Level -->
+            <Grid ColumnDefinitions="*,Auto">
+
+                <TextBox Grid.Column="0"
+                         Watermark="搜尋 Message / Exception / Properties..."
+                         Text="{Binding SearchText}" />
+
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            Spacing="8"
+                            Margin="10,0,0,0">
+
+                    <ComboBox SelectedItem="{Binding SelectedTimeRange}"
+                              ItemsSource="{Binding TimeRanges}"
+                              Width="90"
+                              IsEnabled="{Binding IsTimeRangeEnabled}" />
+
+                    <ComboBox SelectedItem="{Binding SelectedLevel}"
+                              ItemsSource="{Binding LogLevels}"
+                              Width="120" />
+
+                </StackPanel>
+            </Grid>
+
+            <!-- 第二排：日期時間範圍 -->
+            <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                <TextBlock Grid.Column="0" Text="從" VerticalAlignment="Center" Margin="0,0,6,0"/>
+
+                <CalendarDatePicker Grid.Column="1"
+                                    SelectedDate="{Binding StartDate}"
+                                    Watermark="開始日期"
+                                    Width="130"/>
+
+                <TimePicker Grid.Column="2"
+                            SelectedTime="{Binding StartTime}"
+                            Margin="6,0"/>
+
+                <TextBlock Grid.Column="3" Text="到" VerticalAlignment="Center" Margin="6,0"/>
+
+                <CalendarDatePicker Grid.Column="4"
+                                    SelectedDate="{Binding EndDate}"
+                                    Watermark="結束日期"
+                                    Width="130"/>
+
+                <TimePicker Grid.Column="5"
+                            SelectedTime="{Binding EndTime}"
+                            Margin="6,0"/>
+
+                <Button Grid.Column="6"
+                        Content="✕ 清除"
+                        Command="{Binding ClearDateRangeCommand}"
+                        IsVisible="{Binding !IsTimeRangeEnabled}"
+                        Margin="6,0,0,0"/>
+            </Grid>
+
+        </StackPanel>
+
+        <!-- Log Grid -->
+        <Grid Grid.Row="4" ColumnDefinitions="*,Auto,380">
+
+            <!-- 左側：TabControl -->
+            <TabControl Grid.Column="0">
+
+                <!-- 頁籤一：所有 Log -->
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="所有 Log" />
+                            <Border Background="{DynamicResource InformationBrush}"
+                                    CornerRadius="8"
+                                    Padding="5,1"
+                                    VerticalAlignment="Center">
+                                <TextBlock Text="{Binding TotalCount}"
+                                           FontSize="11"
+                                           Foreground="White" />
+                            </Border>
+                        </StackPanel>
+                    </TabItem.Header>
+
+                    <Border Classes="Card">
+                        <DataGrid ItemsSource="{Binding FilteredLogs}"
+                                  SelectedItem="{Binding SelectedLog}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  GridLinesVisibility="Horizontal">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Timestamp"
+                                                    Width="180"
+                                                    Binding="{Binding Timestamp}" />
+                                <DataGridTextColumn Header="Level"
+                                                    Width="100"
+                                                    Binding="{Binding Level}" />
+                                <DataGridTextColumn Header="Message"
+                                                    Width="*"
+                                                    Binding="{Binding Message}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Border>
+                </TabItem>
+
+                <!-- 頁籤二：Exception -->
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="Exception" />
+                            <Border Background="{DynamicResource ErrorBrush}"
+                                    CornerRadius="8"
+                                    Padding="5,1"
+                                    VerticalAlignment="Center"
+                                    IsVisible="{Binding ExceptionCount}">
+                                <TextBlock Text="{Binding ExceptionCount}"
+                                           FontSize="11"
+                                           Foreground="White" />
+                            </Border>
+                        </StackPanel>
+                    </TabItem.Header>
+
+                    <Border Classes="Card">
+                        <DataGrid ItemsSource="{Binding ExceptionLogs}"
+                                  SelectedItem="{Binding SelectedLog}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  GridLinesVisibility="Horizontal">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Timestamp"
+                                                    Width="180"
+                                                    Binding="{Binding Timestamp}" />
+                                <DataGridTextColumn Header="Level"
+                                                    Width="100"
+                                                    Binding="{Binding Level}" />
+                                <DataGridTextColumn Header="Message"
+                                                    Width="*"
+                                                    Binding="{Binding Message}" />
+                                <DataGridTextColumn Header="Exception"
+                                                    Width="300"
+                                                    Binding="{Binding Exception}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Border>
+                </TabItem>
+
+            </TabControl>
+
+            <!-- Splitter -->
+            <GridSplitter Grid.Column="1"
+                          Width="5"
+                          ResizeDirection="Columns"
+                          Background="Transparent" />
+
+            <!-- Detail Panel -->
+            <Border Grid.Column="2"
+                    Classes="Card"
+                    IsVisible="{Binding SelectedLog, Converter={x:Static ObjectConverters.IsNotNull}}">
+
+                <ScrollViewer>
+                    <StackPanel Spacing="12" Margin="4">
+
+                        <!-- 標題列 -->
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Text="Log 明細"
+                                       FontSize="16"
+                                       FontWeight="Bold" />
+                            <Button Grid.Column="1"
+                                    Content="✕"
+                                    Command="{Binding ClearSelectionCommand}"
+                                    Padding="6,2" />
+                        </Grid>
+
+                        <Separator />
+
+                        <!-- Timestamp -->
+                        <StackPanel>
+                            <TextBlock Text="Timestamp"
+                                       FontSize="11"
+                                       Opacity="0.6" />
+                            <TextBlock Text="{Binding SelectedLog.Timestamp}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <!-- Level -->
+                        <StackPanel>
+                            <TextBlock Text="Level"
+                                       FontSize="11"
+                                       Opacity="0.6" />
+                            <TextBlock Text="{Binding SelectedLog.Level}"
+                                       FontWeight="Bold"
+                                       Foreground="{Binding SelectedLog.Level,
+                                       Converter={StaticResource LogLevelToBrushConverter}}" />
+                        </StackPanel>
+
+                        <!-- Message -->
+                        <StackPanel>
+                            <TextBlock Text="Message"
+                                       FontSize="11"
+                                       Opacity="0.6" />
+                            <TextBlock Text="{Binding SelectedLog.Message}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <!-- Exception（有才顯示） -->
+                        <StackPanel IsVisible="{Binding SelectedLog.Exception,
+                        Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                            <TextBlock Text="Exception"
+                                       FontSize="11"
+                                       Opacity="0.6" />
+                            <Border Background="{DynamicResource ErrorBrush}"
+                                    Opacity="0.5"
+                                    CornerRadius="4"
+                                    Padding="8">
+                                <TextBlock Text="{Binding SelectedLog.Exception}"
+                                           TextWrapping="Wrap"
+                                           FontFamily="Consolas,Monospace"
+                                           FontSize="11" />
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Properties -->
+                        <StackPanel IsVisible="{Binding HasSelectedProperties}">
+                            <TextBlock Text="Properties"
+                                       FontSize="11"
+                                       Opacity="0.6"
+                                       Margin="0,0,0,4" />
+                            <ItemsControl ItemsSource="{Binding SelectedLog.Properties}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnDefinitions="140,*" Margin="0,2">
+                                            <TextBlock Text="{Binding Key}"
+                                                       FontWeight="SemiBold"
+                                                       TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding Value}"
+                                                       TextWrapping="Wrap"
+                                                       Opacity="0.85" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+
+                    </StackPanel>
+                </ScrollViewer>
+
+            </Border>
+
+        </Grid>
+
+    </Grid>
+
+</Window>

@@ -1,0 +1,46 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="LogDashboard.App">
+
+    <Application.Styles>
+
+        <!-- Fluent Theme -->
+        <FluentTheme />
+
+        <!-- DataGrid Theme -->
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+
+    </Application.Styles>
+
+    <Application.Resources>
+
+        <!-- Dashboard Colors -->
+
+        <Color x:Key="FatalColor">#C026D3</Color>
+        <Color x:Key="ErrorColor">#EF4444</Color>
+        <Color x:Key="WarningColor">#F59E0B</Color>
+        <Color x:Key="InformationColor">#3B82F6</Color>
+        <Color x:Key="DebugColor">#06B6D4</Color>
+        <Color x:Key="VerboseColor">#94A3B8</Color>
+
+        <SolidColorBrush x:Key="FatalBrush"
+                         Color="{StaticResource FatalColor}" />
+
+        <SolidColorBrush x:Key="ErrorBrush"
+                         Color="{StaticResource ErrorColor}" />
+
+        <SolidColorBrush x:Key="WarningBrush"
+                         Color="{StaticResource WarningColor}" />
+
+        <SolidColorBrush x:Key="InformationBrush"
+                         Color="{StaticResource InformationColor}" />
+
+        <SolidColorBrush x:Key="DebugBrush"
+                         Color="{StaticResource DebugColor}" />
+
+        <SolidColorBrush x:Key="VerboseBrush"
+                         Color="{StaticResource VerboseColor}" />
+
+    </Application.Resources>
+
+</Application>

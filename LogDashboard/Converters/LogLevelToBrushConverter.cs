@@ -13,13 +13,13 @@ public class LogLevelToBrushConverter : IValueConverter
 
         return level switch
         {
-            "Fatal" => Brush.Parse("#B00020"),
-            "Error" => Brush.Parse("#CF6679"),
-            "Warning" => Brush.Parse("#FFCA28"),
-            "Information" => Brush.Parse("#42A5F5"),
-            "Debug" => Brush.Parse("#66BB6A"),
-            "Verbose" => Brush.Parse("#9E9E9E"),
-            _ => Brush.Parse("#9E9E9E"),
+            "Fatal" => Brush.Parse("#E9D5FF"),  // purple-200
+            "Error" => Brush.Parse("#FCA5A5"),  // red-300
+            "Warning" => Brush.Parse("#FDE68A"),  // amber-200
+            "Information" => Brush.Parse("#93C5FD"),  // blue-300
+            "Debug" => Brush.Parse("#67E8F9"),  // cyan-300
+            "Verbose" => Brush.Parse("#94A3B8"),  // slate-400
+            _ => Brush.Parse("#94A3B8"),
         };
     }
 

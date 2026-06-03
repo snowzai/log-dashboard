@@ -5,6 +5,7 @@
         xmlns:vm="using:LogDashboard.ViewModels"
         xmlns:converters="using:LogDashboard.Converters"
         xmlns:models="using:LogDashboard.Models"
+        xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
         mc:Ignorable="d"
         d:DesignWidth="1600"
         d:DesignHeight="900"
@@ -119,7 +120,7 @@
     </Window.Styles>
 
     <!-- ══════════════════════════════════════════════
-         ROOT: Titlebar + Body
+    ROOT: Titlebar + Body
     ══════════════════════════════════════════════ -->
     <Grid RowDefinitions="Auto,*">
 
@@ -207,13 +208,13 @@
         </Border>
 
         <!-- ══════════════════════════════════════════════
-             BODY: Sidebar | Main | Detail
+        BODY: Sidebar | Main | Detail
         ══════════════════════════════════════════════ -->
         <Grid Grid.Row="1"
               ColumnDefinitions="220,*,Auto,360">
 
             <!-- ─────────────────────────────────────────
-                 LEFT SIDEBAR
+            LEFT SIDEBAR
             ───────────────────────────────────────── -->
             <Border Grid.Column="0"
                     BorderThickness="0,0,1,0"
@@ -224,237 +225,237 @@
 
                         <!-- Overview block -->
                         <Border Padding="14,14,14,12">
-                        <StackPanel Spacing="4">
-                            <TextBlock Classes="SideLabel"
-                                       Text="OVERVIEW" />
-                            <StackPanel Orientation="Horizontal"
-                                        Spacing="6"
-                                        VerticalAlignment="Bottom">
-                                <TextBlock Text="{Binding TotalCount}"
-                                           FontSize="28"
-                                           FontWeight="Medium"
-                                           LineHeight="28" />
-                                <TextBlock Text="total logs"
-                                           FontSize="11"
-                                           Opacity="0.45"
-                                           VerticalAlignment="Bottom"
-                                           Margin="0,0,0,3" />
+                            <StackPanel Spacing="4">
+                                <TextBlock Classes="SideLabel"
+                                           Text="OVERVIEW" />
+                                <StackPanel Orientation="Horizontal"
+                                            Spacing="6"
+                                            VerticalAlignment="Bottom">
+                                    <TextBlock Text="{Binding TotalCount}"
+                                               FontSize="28"
+                                               FontWeight="Medium"
+                                               LineHeight="28" />
+                                    <TextBlock Text="total logs"
+                                               FontSize="11"
+                                               Opacity="0.45"
+                                               VerticalAlignment="Bottom"
+                                               Margin="0,0,0,3" />
+                                </StackPanel>
                             </StackPanel>
-                        </StackPanel>
                         </Border>
 
                         <Separator Margin="0" />
 
                         <!-- Level filter -->
                         <Border Padding="14,12,14,10">
-                        <StackPanel Spacing="2">
-                            <TextBlock Classes="SideLabel"
-                                       Text="LEVEL" />
+                            <StackPanel Spacing="2">
+                                <TextBlock Classes="SideLabel"
+                                           Text="LEVEL" />
 
-                            <Button Classes="StatRow"
-                                    Command="{Binding SetLevelFilterCommand}"
-                                    CommandParameter="All"
-                                    Classes.Active="{Binding IsAllLevelSelected}">
-                                <Grid ColumnDefinitions="8,*,Auto">
-                                    <Rectangle Width="8"
-                                               Height="8"
-                                               RadiusX="2"
-                                               RadiusY="2"
-                                               Fill="{DynamicResource SystemBaseMediumColor}"
-                                               VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="1"
-                                               Text="All"
-                                               FontSize="12"
-                                               Margin="8,0,0,0" />
-                                    <TextBlock Grid.Column="2"
-                                               Text="{Binding TotalCount}"
-                                               FontSize="12"
-                                               FontWeight="Medium" />
-                                </Grid>
-                            </Button>
+                                <Button Classes="StatRow"
+                                        Command="{Binding SetLevelFilterCommand}"
+                                        CommandParameter="All"
+                                        Classes.Active="{Binding IsAllLevelSelected}">
+                                    <Grid ColumnDefinitions="8,*,Auto">
+                                        <Rectangle Width="8"
+                                                   Height="8"
+                                                   RadiusX="2"
+                                                   RadiusY="2"
+                                                   Fill="{DynamicResource SystemBaseMediumColor}"
+                                                   VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="1"
+                                                   Text="All"
+                                                   FontSize="12"
+                                                   Margin="8,0,0,0" />
+                                        <TextBlock Grid.Column="2"
+                                                   Text="{Binding TotalCount}"
+                                                   FontSize="12"
+                                                   FontWeight="Medium" />
+                                    </Grid>
+                                </Button>
 
-                            <Button Classes="StatRow"
-                                    Command="{Binding SetLevelFilterCommand}"
-                                    CommandParameter="Fatal"
-                                    Classes.Active="{Binding IsFatalSelected}">
-                                <Grid ColumnDefinitions="8,*,Auto">
-                                    <Rectangle Width="8" Height="8" RadiusX="2" RadiusY="2"
-                                               Fill="{DynamicResource FatalBrush}"
-                                               VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="1" Text="Fatal" FontSize="12" Margin="8,0,0,0" />
-                                    <TextBlock Grid.Column="2"
-                                               Text="{Binding FatalCount}"
-                                               FontSize="12" FontWeight="Medium"
-                                               Foreground="{DynamicResource FatalBrush}" />
-                                </Grid>
-                            </Button>
+                                <Button Classes="StatRow"
+                                        Command="{Binding SetLevelFilterCommand}"
+                                        CommandParameter="Fatal"
+                                        Classes.Active="{Binding IsFatalSelected}">
+                                    <Grid ColumnDefinitions="8,*,Auto">
+                                        <Rectangle Width="8" Height="8" RadiusX="2" RadiusY="2"
+                                                   Fill="{DynamicResource FatalBrush}"
+                                                   VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="1" Text="Fatal" FontSize="12" Margin="8,0,0,0" />
+                                        <TextBlock Grid.Column="2"
+                                                   Text="{Binding FatalCount}"
+                                                   FontSize="12" FontWeight="Medium"
+                                                   Foreground="{DynamicResource FatalBrush}" />
+                                    </Grid>
+                                </Button>
 
-                            <Button Classes="StatRow"
-                                    Command="{Binding SetLevelFilterCommand}"
-                                    CommandParameter="Error"
-                                    Classes.Active="{Binding IsErrorSelected}">
-                                <Grid ColumnDefinitions="8,*,Auto">
-                                    <Rectangle Width="8" Height="8" RadiusX="2" RadiusY="2"
-                                               Fill="{DynamicResource ErrorBrush}"
-                                               VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="1" Text="Error" FontSize="12" Margin="8,0,0,0" />
-                                    <TextBlock Grid.Column="2"
-                                               Text="{Binding ErrorCount}"
-                                               FontSize="12" FontWeight="Medium"
-                                               Foreground="{DynamicResource ErrorBrush}" />
-                                </Grid>
-                            </Button>
+                                <Button Classes="StatRow"
+                                        Command="{Binding SetLevelFilterCommand}"
+                                        CommandParameter="Error"
+                                        Classes.Active="{Binding IsErrorSelected}">
+                                    <Grid ColumnDefinitions="8,*,Auto">
+                                        <Rectangle Width="8" Height="8" RadiusX="2" RadiusY="2"
+                                                   Fill="{DynamicResource ErrorBrush}"
+                                                   VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="1" Text="Error" FontSize="12" Margin="8,0,0,0" />
+                                        <TextBlock Grid.Column="2"
+                                                   Text="{Binding ErrorCount}"
+                                                   FontSize="12" FontWeight="Medium"
+                                                   Foreground="{DynamicResource ErrorBrush}" />
+                                    </Grid>
+                                </Button>
 
-                            <Button Classes="StatRow"
-                                    Command="{Binding SetLevelFilterCommand}"
-                                    CommandParameter="Warning"
-                                    Classes.Active="{Binding IsWarningSelected}">
-                                <Grid ColumnDefinitions="8,*,Auto">
-                                    <Rectangle Width="8" Height="8" RadiusX="2" RadiusY="2"
-                                               Fill="{DynamicResource WarningBrush}"
-                                               VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="1" Text="Warning" FontSize="12" Margin="8,0,0,0" />
-                                    <TextBlock Grid.Column="2"
-                                               Text="{Binding WarningCount}"
-                                               FontSize="12" FontWeight="Medium"
-                                               Foreground="{DynamicResource WarningBrush}" />
-                                </Grid>
-                            </Button>
+                                <Button Classes="StatRow"
+                                        Command="{Binding SetLevelFilterCommand}"
+                                        CommandParameter="Warning"
+                                        Classes.Active="{Binding IsWarningSelected}">
+                                    <Grid ColumnDefinitions="8,*,Auto">
+                                        <Rectangle Width="8" Height="8" RadiusX="2" RadiusY="2"
+                                                   Fill="{DynamicResource WarningBrush}"
+                                                   VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="1" Text="Warning" FontSize="12" Margin="8,0,0,0" />
+                                        <TextBlock Grid.Column="2"
+                                                   Text="{Binding WarningCount}"
+                                                   FontSize="12" FontWeight="Medium"
+                                                   Foreground="{DynamicResource WarningBrush}" />
+                                    </Grid>
+                                </Button>
 
-                            <Button Classes="StatRow"
-                                    Command="{Binding SetLevelFilterCommand}"
-                                    CommandParameter="Information"
-                                    Classes.Active="{Binding IsInformationSelected}">
-                                <Grid ColumnDefinitions="8,*,Auto">
-                                    <Rectangle Width="8" Height="8" RadiusX="2" RadiusY="2"
-                                               Fill="{DynamicResource InformationBrush}"
-                                               VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="1" Text="Information" FontSize="12" Margin="8,0,0,0" />
-                                    <TextBlock Grid.Column="2"
-                                               Text="{Binding InformationCount}"
-                                               FontSize="12" FontWeight="Medium"
-                                               Foreground="{DynamicResource InformationBrush}" />
-                                </Grid>
-                            </Button>
+                                <Button Classes="StatRow"
+                                        Command="{Binding SetLevelFilterCommand}"
+                                        CommandParameter="Information"
+                                        Classes.Active="{Binding IsInformationSelected}">
+                                    <Grid ColumnDefinitions="8,*,Auto">
+                                        <Rectangle Width="8" Height="8" RadiusX="2" RadiusY="2"
+                                                   Fill="{DynamicResource InformationBrush}"
+                                                   VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="1" Text="Information" FontSize="12" Margin="8,0,0,0" />
+                                        <TextBlock Grid.Column="2"
+                                                   Text="{Binding InformationCount}"
+                                                   FontSize="12" FontWeight="Medium"
+                                                   Foreground="{DynamicResource InformationBrush}" />
+                                    </Grid>
+                                </Button>
 
-                            <Button Classes="StatRow"
-                                    Command="{Binding SetLevelFilterCommand}"
-                                    CommandParameter="Debug"
-                                    Classes.Active="{Binding IsDebugSelected}">
-                                <Grid ColumnDefinitions="8,*,Auto">
-                                    <Rectangle Width="8" Height="8" RadiusX="2" RadiusY="2"
-                                               Fill="{DynamicResource DebugBrush}"
-                                               VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="1" Text="Debug" FontSize="12" Margin="8,0,0,0" />
-                                    <TextBlock Grid.Column="2"
-                                               Text="{Binding DebugCount}"
-                                               FontSize="12" FontWeight="Medium"
-                                               Foreground="{DynamicResource DebugBrush}" />
-                                </Grid>
-                            </Button>
+                                <Button Classes="StatRow"
+                                        Command="{Binding SetLevelFilterCommand}"
+                                        CommandParameter="Debug"
+                                        Classes.Active="{Binding IsDebugSelected}">
+                                    <Grid ColumnDefinitions="8,*,Auto">
+                                        <Rectangle Width="8" Height="8" RadiusX="2" RadiusY="2"
+                                                   Fill="{DynamicResource DebugBrush}"
+                                                   VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="1" Text="Debug" FontSize="12" Margin="8,0,0,0" />
+                                        <TextBlock Grid.Column="2"
+                                                   Text="{Binding DebugCount}"
+                                                   FontSize="12" FontWeight="Medium"
+                                                   Foreground="{DynamicResource DebugBrush}" />
+                                    </Grid>
+                                </Button>
 
-                            <Button Classes="StatRow"
-                                    Command="{Binding SetLevelFilterCommand}"
-                                    CommandParameter="Verbose"
-                                    Classes.Active="{Binding IsVerboseSelected}">
-                                <Grid ColumnDefinitions="8,*,Auto">
-                                    <Rectangle Width="8" Height="8" RadiusX="2" RadiusY="2"
-                                               Fill="{DynamicResource VerboseBrush}"
-                                               VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="1" Text="Verbose" FontSize="12" Margin="8,0,0,0" />
-                                    <TextBlock Grid.Column="2"
-                                               Text="{Binding VerboseCount}"
-                                               FontSize="12" FontWeight="Medium"
-                                               Foreground="{DynamicResource VerboseBrush}" />
-                                </Grid>
-                            </Button>
-                        </StackPanel>
+                                <Button Classes="StatRow"
+                                        Command="{Binding SetLevelFilterCommand}"
+                                        CommandParameter="Verbose"
+                                        Classes.Active="{Binding IsVerboseSelected}">
+                                    <Grid ColumnDefinitions="8,*,Auto">
+                                        <Rectangle Width="8" Height="8" RadiusX="2" RadiusY="2"
+                                                   Fill="{DynamicResource VerboseBrush}"
+                                                   VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="1" Text="Verbose" FontSize="12" Margin="8,0,0,0" />
+                                        <TextBlock Grid.Column="2"
+                                                   Text="{Binding VerboseCount}"
+                                                   FontSize="12" FontWeight="Medium"
+                                                   Foreground="{DynamicResource VerboseBrush}" />
+                                    </Grid>
+                                </Button>
+                            </StackPanel>
                         </Border>
 
                         <Separator Margin="0" />
 
                         <!-- Time chips -->
                         <Border Padding="14,12,14,10">
-                        <StackPanel Spacing="8">
-                            <TextBlock Classes="SideLabel"
-                                       Text="TIME RANGE" />
-                            <WrapPanel Orientation="Horizontal">
-                                <WrapPanel.Styles>
-                                    <Style Selector="Button.TimeChip">
-                                        <Setter Property="Margin" Value="0,0,4,4" />
-                                    </Style>
-                                </WrapPanel.Styles>
-                                <Button Classes="TimeChip" Content="1h"
-                                        Command="{Binding SetTimeRangeCommand}" CommandParameter="1h"
-                                        Classes.Active="{Binding Is1hSelected}" />
-                                <Button Classes="TimeChip" Content="4h"
-                                        Command="{Binding SetTimeRangeCommand}" CommandParameter="4h"
-                                        Classes.Active="{Binding Is4hSelected}" />
-                                <Button Classes="TimeChip" Content="12h"
-                                        Command="{Binding SetTimeRangeCommand}" CommandParameter="12h"
-                                        Classes.Active="{Binding Is12hSelected}" />
-                                <Button Classes="TimeChip" Content="1d"
-                                        Command="{Binding SetTimeRangeCommand}" CommandParameter="1d"
-                                        Classes.Active="{Binding Is1dSelected}" />
-                                <Button Classes="TimeChip" Content="7d"
-                                        Command="{Binding SetTimeRangeCommand}" CommandParameter="7d"
-                                        Classes.Active="{Binding Is7dSelected}" />
-                                <Button Classes="TimeChip" Content="1mon"
-                                        Command="{Binding SetTimeRangeCommand}" CommandParameter="1mon"
-                                        Classes.Active="{Binding Is1monSelected}" />
-                                <Button Classes="TimeChip" Content="All"
-                                        Command="{Binding SetTimeRangeCommand}" CommandParameter="All"
-                                        Classes.Active="{Binding IsAllTimeSelected}" />
-                            </WrapPanel>
-                        </StackPanel>
+                            <StackPanel Spacing="8">
+                                <TextBlock Classes="SideLabel"
+                                           Text="TIME RANGE" />
+                                <WrapPanel Orientation="Horizontal">
+                                    <WrapPanel.Styles>
+                                        <Style Selector="Button.TimeChip">
+                                            <Setter Property="Margin" Value="0,0,4,4" />
+                                        </Style>
+                                    </WrapPanel.Styles>
+                                    <Button Classes="TimeChip" Content="1h"
+                                            Command="{Binding SetTimeRangeCommand}" CommandParameter="1h"
+                                            Classes.Active="{Binding Is1hSelected}" />
+                                    <Button Classes="TimeChip" Content="4h"
+                                            Command="{Binding SetTimeRangeCommand}" CommandParameter="4h"
+                                            Classes.Active="{Binding Is4hSelected}" />
+                                    <Button Classes="TimeChip" Content="12h"
+                                            Command="{Binding SetTimeRangeCommand}" CommandParameter="12h"
+                                            Classes.Active="{Binding Is12hSelected}" />
+                                    <Button Classes="TimeChip" Content="1d"
+                                            Command="{Binding SetTimeRangeCommand}" CommandParameter="1d"
+                                            Classes.Active="{Binding Is1dSelected}" />
+                                    <Button Classes="TimeChip" Content="7d"
+                                            Command="{Binding SetTimeRangeCommand}" CommandParameter="7d"
+                                            Classes.Active="{Binding Is7dSelected}" />
+                                    <Button Classes="TimeChip" Content="1mon"
+                                            Command="{Binding SetTimeRangeCommand}" CommandParameter="1mon"
+                                            Classes.Active="{Binding Is1monSelected}" />
+                                    <Button Classes="TimeChip" Content="All"
+                                            Command="{Binding SetTimeRangeCommand}" CommandParameter="All"
+                                            Classes.Active="{Binding IsAllTimeSelected}" />
+                                </WrapPanel>
+                            </StackPanel>
                         </Border>
 
                         <Separator Margin="0" />
 
                         <!-- Search -->
                         <Border Padding="14,12,14,10">
-                        <StackPanel>
-                            <TextBlock Classes="SideLabel" Text="SEARCH" />
-                            <TextBox Text="{Binding SearchText}"
-                                     Watermark="message / exception / props..."
-                                     FontSize="11"
-                                     FontFamily="Cascadia Code,Consolas,Monospace" />
-                        </StackPanel>
+                            <StackPanel>
+                                <TextBlock Classes="SideLabel" Text="SEARCH" />
+                                <TextBox Text="{Binding SearchText}"
+                                         Watermark="message / exception / props..."
+                                         FontSize="11"
+                                         FontFamily="Cascadia Code,Consolas,Monospace" />
+                            </StackPanel>
                         </Border>
 
                         <Separator Margin="0" />
 
                         <!-- Date range -->
                         <Border Padding="14,12,14,12">
-                        <StackPanel Spacing="8">
-                            <Grid ColumnDefinitions="*,Auto">
-                                <TextBlock Classes="SideLabel" Text="DATE RANGE" />
-                                <Button Grid.Column="1"
-                                        Content="✕ clear"
-                                        FontSize="10"
-                                        Padding="4,1"
-                                        Command="{Binding ClearDateRangeCommand}"
-                                        IsVisible="{Binding !IsTimeRangeEnabled}" />
-                            </Grid>
+                            <StackPanel Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Classes="SideLabel" Text="DATE RANGE" />
+                                    <Button Grid.Column="1"
+                                            Content="✕ clear"
+                                            FontSize="10"
+                                            Padding="4,1"
+                                            Command="{Binding ClearDateRangeCommand}"
+                                            IsVisible="{Binding !IsTimeRangeEnabled}" />
+                                </Grid>
 
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="From" FontSize="10" Opacity="0.45" />
-                                <CalendarDatePicker SelectedDate="{Binding StartDate}"
-                                                    Watermark="start date"
-                                                    FontSize="11" />
-                                <TimePicker SelectedTime="{Binding StartTime}"
-                                            FontSize="11" />
-                            </StackPanel>
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="From" FontSize="10" Opacity="0.45" />
+                                    <CalendarDatePicker SelectedDate="{Binding StartDate}"
+                                                        Watermark="start date"
+                                                        FontSize="11" />
+                                    <TimePicker SelectedTime="{Binding StartTime}"
+                                                FontSize="11" />
+                                </StackPanel>
 
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="To" FontSize="10" Opacity="0.45" />
-                                <CalendarDatePicker SelectedDate="{Binding EndDate}"
-                                                    Watermark="end date"
-                                                    FontSize="11" />
-                                <TimePicker SelectedTime="{Binding EndTime}"
-                                            FontSize="11" />
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="To" FontSize="10" Opacity="0.45" />
+                                    <CalendarDatePicker SelectedDate="{Binding EndDate}"
+                                                        Watermark="end date"
+                                                        FontSize="11" />
+                                    <TimePicker SelectedTime="{Binding EndTime}"
+                                                FontSize="11" />
+                                </StackPanel>
                             </StackPanel>
-                        </StackPanel>
                         </Border>
 
                     </StackPanel>
@@ -462,13 +463,36 @@
             </Border>
 
             <!-- ─────────────────────────────────────────
-                 MAIN: Tabs + DataGrid
+            MAIN: Timeline + Tabs + DataGrid
             ───────────────────────────────────────── -->
             <Grid Grid.Column="1"
                   RowDefinitions="Auto,*">
 
-                <TabControl Grid.Row="0"
-                            Grid.RowSpan="2"
+                <!-- ── Timeline Chart ── -->
+                <Border Grid.Row="0"
+                        BorderThickness="0,0,0,1"
+                        BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                    <!-- Timeline -->
+                        <Border Grid.Column="1"
+                                Classes="Card">
+
+                            <StackPanel>
+
+                                <TextBlock Text="Timeline"
+                                           FontWeight="Bold"
+                                           Margin="0,0,0,10"/>
+
+                                <!-- LiveCharts CartesianChart -->
+                                <lvc:CartesianChart Series="{Binding TimelineSeries}"
+                                                    XAxes="{Binding TimelineXAxes}"
+                                                    Height="200" />
+
+                            </StackPanel>
+
+                        </Border>
+                </Border>
+
+                <TabControl Grid.Row="1"
                             Padding="0"
                             TabStripPlacement="Top">
 
@@ -618,7 +642,7 @@
                           Background="Transparent" />
 
             <!-- ─────────────────────────────────────────
-                 DETAIL PANEL
+            DETAIL PANEL
             ───────────────────────────────────────── -->
             <Border Grid.Column="3"
                     BorderThickness="1,0,0,0"
@@ -650,92 +674,92 @@
                     <!-- Detail body -->
                     <ScrollViewer Grid.Row="1">
                         <Border Padding="14">
-                        <StackPanel Spacing="16">
+                            <StackPanel Spacing="16">
 
-                            <!-- Timestamp -->
-                            <StackPanel Spacing="3">
-                                <TextBlock Classes="DetailKey" Text="TIMESTAMP" />
-                                <TextBlock Classes="DetailVal Mono"
-                                           Text="{Binding SelectedLog.Timestamp,
-                                                  StringFormat=\{0:yyyy-MM-dd HH:mm:ss.fff\}}" />
+                                <!-- Timestamp -->
+                                <StackPanel Spacing="3">
+                                    <TextBlock Classes="DetailKey" Text="TIMESTAMP" />
+                                    <TextBlock Classes="DetailVal Mono"
+                                               Text="{Binding SelectedLog.Timestamp,
+                                               StringFormat=\{0:yyyy-MM-dd HH:mm:ss.fff\}}" />
+                                </StackPanel>
+
+                                <!-- Level -->
+                                <StackPanel Spacing="3">
+                                    <TextBlock Classes="DetailKey" Text="LEVEL" />
+                                    <Border Classes="LevelBadge"
+                                            HorizontalAlignment="Left"
+                                            Background="{Binding SelectedLog.Level,
+                                            Converter={StaticResource LogLevelToBackgroundConverter}}">
+                                        <TextBlock Text="{Binding SelectedLog.Level}"
+                                                   FontSize="11"
+                                                   FontWeight="SemiBold"
+                                                   FontFamily="Cascadia Code,Consolas,Monospace"
+                                                   Foreground="{Binding SelectedLog.Level,
+                                                   Converter={StaticResource LogLevelToBrushConverter}}" />
+                                    </Border>
+                                </StackPanel>
+
+                                <!-- Message -->
+                                <StackPanel Spacing="3">
+                                    <TextBlock Classes="DetailKey" Text="MESSAGE" />
+                                    <TextBlock Classes="DetailVal"
+                                               Text="{Binding SelectedLog.Message}" />
+                                </StackPanel>
+
+                                <!-- Exception -->
+                                <StackPanel Spacing="3"
+                                            IsVisible="{Binding SelectedLog.Exception,
+                                            Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                                    <TextBlock Classes="DetailKey" Text="EXCEPTION" />
+                                    <Border Background="{DynamicResource SystemErrorTextColor}"
+                                            Opacity="0.08"
+                                            CornerRadius="6"
+                                            Padding="10,8"
+                                            BorderBrush="{DynamicResource ErrorBrush}"
+                                            BorderThickness="2,0,0,0">
+                                        <TextBlock Text="{Binding SelectedLog.Exception}"
+                                                   FontFamily="Cascadia Code,Consolas,Monospace"
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource ErrorBrush}"
+                                                   TextWrapping="Wrap"
+                                                   LineHeight="18" />
+                                    </Border>
+                                </StackPanel>
+
+                                <!-- Properties -->
+                                <StackPanel Spacing="3"
+                                            IsVisible="{Binding HasSelectedProperties}">
+                                    <TextBlock Classes="DetailKey" Text="PROPERTIES" />
+
+                                    <Border CornerRadius="6"
+                                            BorderThickness="0.5"
+                                            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                            Padding="10,8">
+                                        <ItemsControl ItemsSource="{Binding SelectedLog.Properties}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid ColumnDefinitions="120,*"
+                                                          Margin="0,3">
+                                                        <TextBlock Text="{Binding Key}"
+                                                                   FontSize="11"
+                                                                   FontWeight="Medium"
+                                                                   Opacity="0.55"
+                                                                   TextTrimming="CharacterEllipsis"
+                                                                   FontFamily="Cascadia Code,Consolas,Monospace" />
+                                                        <TextBlock Grid.Column="1"
+                                                                   Text="{Binding Value}"
+                                                                   FontSize="11"
+                                                                   TextWrapping="Wrap"
+                                                                   FontFamily="Cascadia Code,Consolas,Monospace" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Border>
+                                </StackPanel>
+
                             </StackPanel>
-
-                            <!-- Level -->
-                            <StackPanel Spacing="3">
-                                <TextBlock Classes="DetailKey" Text="LEVEL" />
-                                <Border Classes="LevelBadge"
-                                        HorizontalAlignment="Left"
-                                        Background="{Binding SelectedLog.Level,
-                                                     Converter={StaticResource LogLevelToBackgroundConverter}}">
-                                    <TextBlock Text="{Binding SelectedLog.Level}"
-                                               FontSize="11"
-                                               FontWeight="SemiBold"
-                                               FontFamily="Cascadia Code,Consolas,Monospace"
-                                               Foreground="{Binding SelectedLog.Level,
-                                                            Converter={StaticResource LogLevelToBrushConverter}}" />
-                                </Border>
-                            </StackPanel>
-
-                            <!-- Message -->
-                            <StackPanel Spacing="3">
-                                <TextBlock Classes="DetailKey" Text="MESSAGE" />
-                                <TextBlock Classes="DetailVal"
-                                           Text="{Binding SelectedLog.Message}" />
-                            </StackPanel>
-
-                            <!-- Exception -->
-                            <StackPanel Spacing="3"
-                                        IsVisible="{Binding SelectedLog.Exception,
-                                                    Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
-                                <TextBlock Classes="DetailKey" Text="EXCEPTION" />
-                                <Border Background="{DynamicResource SystemErrorTextColor}"
-                                        Opacity="0.8"
-                                        CornerRadius="6"
-                                        Padding="10,8"
-                                        BorderBrush="{DynamicResource ErrorBrush}"
-                                        BorderThickness="2,0,0,0">
-                                    <TextBlock Text="{Binding SelectedLog.Exception}"
-                                               FontFamily="Cascadia Code,Consolas,Monospace"
-                                               FontSize="11"
-                                               Foreground="{DynamicResource ErrorBrush}"
-                                               TextWrapping="Wrap"
-                                               LineHeight="18" />
-                                </Border>
-                            </StackPanel>
-
-                            <!-- Properties -->
-                            <StackPanel Spacing="3"
-                                        IsVisible="{Binding HasSelectedProperties}">
-                                <TextBlock Classes="DetailKey" Text="PROPERTIES" />
-
-                                <Border CornerRadius="6"
-                                        BorderThickness="0.5"
-                                        BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-                                        Padding="10,8">
-                                    <ItemsControl ItemsSource="{Binding SelectedLog.Properties}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Grid ColumnDefinitions="120,*"
-                                                      Margin="0,3">
-                                                    <TextBlock Text="{Binding Key}"
-                                                               FontSize="11"
-                                                               FontWeight="Medium"
-                                                               Opacity="0.55"
-                                                               TextTrimming="CharacterEllipsis"
-                                                               FontFamily="Cascadia Code,Consolas,Monospace" />
-                                                    <TextBlock Grid.Column="1"
-                                                               Text="{Binding Value}"
-                                                               FontSize="11"
-                                                               TextWrapping="Wrap"
-                                                               FontFamily="Cascadia Code,Consolas,Monospace" />
-                                                </Grid>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </Border>
-                            </StackPanel>
-
-                        </StackPanel>
                         </Border>
                     </ScrollViewer>
                 </Grid>
